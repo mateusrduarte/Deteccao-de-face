@@ -12,13 +12,15 @@ public class DetectarFace {
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        Mat imagemColorida = imread("src\\pessoas\\pessoas4.jpg");
+        Mat imagemColorida = imread("src\\pessoas\\pessoas3.jpg");
         Mat imagemCinza = new Mat();
         Imgproc.cvtColor(imagemColorida, imagemCinza, Imgproc.COLOR_BGR2GRAY);
 
         CascadeClassifier classificador = new CascadeClassifier("src\\cascades\\haarcascade_frontalface_default.xml");
         MatOfRect facesDetectadas = new MatOfRect();
-        classificador.detectMultiScale(imagemCinza, facesDetectadas);
+
+        //Para melhor resultado os parâmetros do classificador devem ser ajustados para cada imagem.
+        classificador.detectMultiScale(imagemCinza, facesDetectadas, 1.2, 3, 0, new Size(30, 30), new Size(500, 500));
         System.out.println(facesDetectadas.toArray().length);
 
         for (Rect rect : facesDetectadas.toArray()) {

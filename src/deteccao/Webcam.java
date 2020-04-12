@@ -1,7 +1,9 @@
 package deteccao;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
+import org.opencv.core.*;
+import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
 import javax.swing.*;
@@ -73,6 +75,20 @@ public class Webcam extends JFrame{
                 captura.read(video);
                 if (!video.empty()) {
                     setSize(video.width() + 50, video.height() + 70);
+
+                    Mat imagemColorida = video;
+                    Mat imagemCinza = new Mat();
+                    Imgproc.cvtColor(imagemColorida, imagemCinza, Imgproc.COLOR_BGR2GRAY);
+
+                    CascadeClassifier classificador = new CascadeClassifier("src\\cascades\\haarcascade_frontalface_default.xml");
+                    MatOfRect faceDetectada = new MatOfRect();
+
+                    classificador.detectMultiScale(imagemCinza, faceDetectada, 1.1, 1, 0, new Size(150, 150), new Size(500, 500));
+
+                    for (Rect rect : faceDetectada.toArray()) {
+                        Imgproc.rectangle(imagemColorida, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(0, 0, 255), 2);
+                    }
+
                     BufferedImage imagem = new Utilitarios().convertMatToImage(video);
                     Graphics g = painelMain.getGraphics();
                     g.drawImage(imagem, 0, 0, imagem.getWidth(), imagem.getHeight(), null);
